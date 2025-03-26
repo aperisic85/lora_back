@@ -1,4 +1,5 @@
 use super::gateway::Gateway;
+use base64;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -49,7 +50,7 @@ pub struct LoraPacket {
     pub eui: String,
     pub devaddr: String,
     pub frequency: i64,
-    pub data: Vec<u8>,
+    pub data: String,
     pub received_at: DateTime<Utc>,
     pub gateways: serde_json::Value,
 }
@@ -58,6 +59,6 @@ pub struct CreateLoraPacket {
     pub eui: String,
     pub devaddr: String,
     pub frequency: i64,
-    pub data: Vec<u8>,               // BYTEA
+    pub data: String,                // BYTEA
     pub gateways: serde_json::Value, // dynamic gateway data
 }
