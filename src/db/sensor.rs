@@ -103,8 +103,10 @@ pub async fn create_sensor_data(
 pub async fn save_lora_packet(
     pool: &PgPool,
     packet: CreateLoraPacket,
-) -> Result<LoraPacket, Error> {
-    let decoded_data = hex::decode(&packet.data).unwrap_or_default(); // Decode hex string to bytes
+) -> Result<LoraPacket, ApiError> {
+    // Proper error handling for hex decoding
+    //let decoded_data = hex::decode(&packet.data).map_err(|_| ApiError::InvalidHexData)?;
+    let decoded_data = packet.data.clone();
 
     sqlx::query_as!(
         LoraPacket,
@@ -116,9 +118,9 @@ pub async fn save_lora_packet(
             eui,
             devaddr,
             frequency,
-            data as "data: Vec<u8>",
+            data as "data!: Vec<u8>",
             received_at as "received_at: chrono::DateTime<Utc>",
-            gateways as "gateways: serde_json::Value"
+            gateways as "gateways!: serde_json::Value"
         "#,
         packet.eui,
         packet.devaddr,
@@ -128,4 +130,5 @@ pub async fn save_lora_packet(
     )
     .fetch_one(pool)
     .await
+    .map_err(ApiError::DatabaseError)
 }

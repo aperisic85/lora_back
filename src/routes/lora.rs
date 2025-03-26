@@ -1,19 +1,18 @@
-use crate::{
-    db,
-    error::ApiError, models::device::Device,
-};
+use crate::{db, error::ApiError, models::device::Device};
 use axum::{
-    extract::{Path, State}, response::IntoResponse, routing::{get, post}, Json, Router
-
+    Json, Router,
+    extract::{Path, State},
+    response::IntoResponse,
+    routing::{get, post},
 };
 use sqlx::PgPool;
 
-use crate::models::device::{CreateDevice};
-use crate::models::sensor_data::{SensorData, CreateSensorData, CreateLoraPacket, LoraPacket};
-use crate::db::sensor::save_lora_packet;
 use crate::db::sensor::create_sensor_data;
-use tracing::info;
+use crate::db::sensor::save_lora_packet;
+use crate::models::device::CreateDevice;
+use crate::models::sensor_data::{CreateLoraPacket, CreateSensorData, LoraPacket, SensorData};
 use axum_macros::*;
+use tracing::info;
 pub fn device_routes() -> Router<PgPool> {
     Router::new()
         .route("/", get(get_devices))
@@ -23,19 +22,14 @@ pub fn device_routes() -> Router<PgPool> {
 
 // Ruta za senzorske podatke
 pub fn sensor_data_routes() -> Router<PgPool> {
-    Router::new()
-        .route("/sensor-data", post(create_sensor_data_handler))
+    Router::new().route("/sensor-data", post(create_sensor_data_handler))
 }
-
 
 pub fn lora_routes() -> Router<PgPool> {
-    Router::new()
-        .route("/lora-packets", post(test_sensor_data))
+    Router::new().route("/lora-packets", post(handle_lora_packet))
 }
 
-async fn get_devices(
-    State(pool): State<PgPool>
-) -> Result<Json<Vec<Device>>, ApiError> {
+async fn get_devices(State(pool): State<PgPool>) -> Result<Json<Vec<Device>>, ApiError> {
     let devices = db::sensor::get_all_devices(&pool).await?;
     Ok(Json(devices))
 }
@@ -65,9 +59,6 @@ pub async fn create_sensor_data_handler(
     let sensor_data = create_sensor_data(&pool, new_data).await?;
     Ok(Json(sensor_data))
 }
-
-
-
 
 // 4. POST za testiranje primljenih podataka sa senzora. Printa primljene podatke.
 pub async fn test_sensor_data(

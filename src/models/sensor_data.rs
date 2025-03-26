@@ -1,9 +1,8 @@
-use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc};
-use uuid::Uuid;
 use super::gateway::Gateway;
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
-
 
 pub struct SensorData {
     pub id: Uuid,
@@ -21,7 +20,6 @@ pub struct CreateSensorData {
     pub rssi: Option<i32>,
     pub snr: Option<f64>,
 }
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SensorData2 {
@@ -44,21 +42,22 @@ pub struct SensorData2 {
     pub ts: i64,
 }
 
-#[derive(sqlx::FromRow, Debug)]
+// For database responses
+#[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct LoraPacket {
     pub id: i32,
-    pub eui: String,     // lowercase `eui` (matches `eui` in SQL)
-    pub devaddr: String, // lowercase `devaddr`
+    pub eui: String,
+    pub devaddr: String,
     pub frequency: i64,
-    pub data: Option<Vec<u8>>,
-    pub received_at: chrono::DateTime<Utc>,
+    pub data: Vec<u8>,
+    pub received_at: DateTime<Utc>,
     pub gateways: serde_json::Value,
 }
-#[derive(Debug, Deserialize,sqlx::FromRow)]
+#[derive(Debug, Deserialize, sqlx::FromRow)]
 pub struct CreateLoraPacket {
     pub eui: String,
     pub devaddr: String,
     pub frequency: i64,
-    pub data: String, // BYTEA
+    pub data: Vec<u8>,               // BYTEA
     pub gateways: serde_json::Value, // dynamic gateway data
 }
