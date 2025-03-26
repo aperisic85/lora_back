@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        INSERT INTO lora_packets (eui, devaddr, frequency, data, gateways)\n        VALUES ($1, $2, $3, $4, $5)\n        RETURNING \n            id,\n            eui,\n            devaddr,\n            frequency,\n            data as \"data!: Option<Vec<u8>>\",\n            received_at as \"received_at: chrono::DateTime<Utc>\",\n            gateways as \"gateways!: serde_json::Value\"\n        ",
+  "query": "\n        INSERT INTO lora_packets (eui, devaddr, frequency, data, gateways)\n        VALUES ($1, $2, $3, $4, $5)\n        RETURNING\n            id,\n            eui,\n            devaddr,\n            frequency,\n            data as \"data: Vec<u8>\",\n            received_at as \"received_at: chrono::DateTime<Utc>\",\n            gateways as \"gateways: serde_json::Value\"\n        ",
   "describe": {
     "columns": [
       {
@@ -25,7 +25,7 @@
       },
       {
         "ordinal": 4,
-        "name": "data!: Option<Vec<u8>>",
+        "name": "data: Vec<u8>",
         "type_info": "Bytea"
       },
       {
@@ -35,7 +35,7 @@
       },
       {
         "ordinal": 6,
-        "name": "gateways!: serde_json::Value",
+        "name": "gateways: serde_json::Value",
         "type_info": "Jsonb"
       }
     ],
@@ -58,5 +58,5 @@
       false
     ]
   },
-  "hash": "beec63427b996c9c022ec58fcb1cf5c0288b1b513531663708e52e09e552fa9d"
+  "hash": "5ecd4ef8abe72037d0bc16128ec3eb947c5fd933c4f0fe97749b305cf2c2595a"
 }

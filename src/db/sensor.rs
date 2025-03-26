@@ -1,20 +1,14 @@
-use crate::models::device::{CreateDevice, Device};
-use crate::models::sensor_data::{CreateSensorData, SensorData, CreateLoraPacket, LoraPacket};
-use sqlx::types::chrono::{DateTime, Utc};
-use sqlx::{PgPool, Error};
 use crate::error::ApiError;
-use axum::{
-    extract::State,
-    Json,
-};
+use crate::models::device::{CreateDevice, Device};
+use crate::models::sensor_data::{CreateLoraPacket, CreateSensorData, LoraPacket, SensorData};
+use axum::{Json, extract::State};
+use sqlx::types::chrono::{DateTime, Utc};
+use sqlx::{Error, PgPool};
 
 use tracing::info;
 
 // Kreiranje novog uređaja
-pub async fn create_device(
-    pool: &PgPool,
-    payload: CreateDevice,
-) -> Result<Device, ApiError> {
+pub async fn create_device(pool: &PgPool, payload: CreateDevice) -> Result<Device, ApiError> {
     sqlx::query_as!(
         Device,
         r#"
@@ -36,16 +30,13 @@ pub async fn create_device(
     .map_err(ApiError::DatabaseError)
 }
 
- // Funkcija za dohvat podataka po device_id
+// Funkcija za dohvat podataka po device_id
 // Dohvat uređaja po ID-u
-pub async fn get_device_by_id(
-    pool: &PgPool,
-    id: uuid::Uuid,
-) -> Result<Device, ApiError> {
+pub async fn get_device_by_id(pool: &PgPool, id: uuid::Uuid) -> Result<Device, ApiError> {
     sqlx::query_as!(
         Device,
         r#"
-        SELECT 
+        SELECT
             id,
             device_id,
             device_type,
@@ -62,12 +53,11 @@ pub async fn get_device_by_id(
     .ok_or(ApiError::NotFound)
 }
 
-
 pub async fn get_all_devices(pool: &PgPool) -> Result<Vec<Device>, ApiError> {
     sqlx::query_as!(
         Device,
         r#"
-        SELECT 
+        SELECT
             id,
             device_id,
             device_type,
@@ -82,7 +72,6 @@ pub async fn get_all_devices(pool: &PgPool) -> Result<Vec<Device>, ApiError> {
     .map_err(ApiError::DatabaseError)
 }
 
-
 // Glavna funkcija za unos podataka
 pub async fn create_sensor_data(
     pool: &PgPool,
@@ -93,7 +82,7 @@ pub async fn create_sensor_data(
         r#"
         INSERT INTO sensor_data (device_id, data, rssi, snr)
         VALUES ($1, $2, $3, $4)
-        RETURNING 
+        RETURNING
             id,
             device_id,
             data as "data: _",
@@ -122,12 +111,12 @@ pub async fn save_lora_packet(
         r#"
         INSERT INTO lora_packets (eui, devaddr, frequency, data, gateways)
         VALUES ($1, $2, $3, $4, $5)
-        RETURNING 
+        RETURNING
             id,
             eui,
             devaddr,
             frequency,
-            data as "data: Option<Vec<u8>>",
+            data as "data: Vec<u8>",
             received_at as "received_at: chrono::DateTime<Utc>",
             gateways as "gateways: serde_json::Value"
         "#,

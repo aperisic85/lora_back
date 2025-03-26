@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT \n            id,\n            device_id,\n            device_type,\n            description,\n            created_at as \"created_at: chrono::DateTime<Utc>\"\n        FROM devices\n        WHERE id = $1\n        ",
+  "query": "\n        SELECT\n            id,\n            device_id,\n            device_type,\n            description,\n            created_at as \"created_at: chrono::DateTime<Utc>\"\n        FROM devices\n        ORDER BY created_at DESC\n        ",
   "describe": {
     "columns": [
       {
@@ -30,9 +30,7 @@
       }
     ],
     "parameters": {
-      "Left": [
-        "Uuid"
-      ]
+      "Left": []
     },
     "nullable": [
       false,
@@ -42,5 +40,5 @@
       false
     ]
   },
-  "hash": "46b9f320fb5cfbbb7fa98f5ebdc80ef2011bdc3def7870ca515479a0ab2cb104"
+  "hash": "1f7dafec603aa25acad29c83b4a640dc81ae252431332260c06c5b0b588303de"
 }

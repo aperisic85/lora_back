@@ -1,13 +1,14 @@
 use axum::{
+    Json,
     http::StatusCode,
     response::{IntoResponse, Response},
-    Json,
 };
 use serde_json::json;
+use sqlx::Error;
 
 #[derive(Debug)]
 pub enum ApiError {
-    DatabaseError (sqlx::Error),
+    DatabaseError(sqlx::Error),
     NotFound,
     InvalidHexData,
 }
@@ -23,13 +24,17 @@ impl IntoResponse for ApiError {
                 StatusCode::BAD_REQUEST,
                 "Invalid hexadecimal data".to_string(),
             ),
-            ApiError::NotFound => (
-                StatusCode::NOT_FOUND,
-                "Resource not found".to_string(),
-            ),
+            ApiError::NotFound => (StatusCode::NOT_FOUND, "Resource not found".to_string()),
         };
-        
+
         // Return tuple with status code and JSON body
         (status, Json(json!({ "error": message }))).into_response()
+    }
+}
+
+impl From<sqlx::Error> for ApiError {
+    //convert sqlx error to my API error
+    fn from(value: sqlx::Error) -> Self {
+        ApiError::DatabaseError(value)
     }
 }

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        INSERT INTO sensor_data (device_id, data, rssi, snr)\n        VALUES ($1, $2, $3, $4)\n        RETURNING \n            id,\n            device_id,\n            data as \"data: _\",\n            received_at as \"received_at: chrono::DateTime<Utc>\",\n            rssi,\n            snr\n        ",
+  "query": "\n        INSERT INTO sensor_data (device_id, data, rssi, snr)\n        VALUES ($1, $2, $3, $4)\n        RETURNING\n            id,\n            device_id,\n            data as \"data: _\",\n            received_at as \"received_at: chrono::DateTime<Utc>\",\n            rssi,\n            snr\n        ",
   "describe": {
     "columns": [
       {
@@ -51,5 +51,5 @@
       true
     ]
   },
-  "hash": "c3ea44c2ab5336707092365cf720387bd3bda137efcae8a2e05941204878c8f5"
+  "hash": "9b8e75a515a71a4a1f570dd84a8a3f5cb4fca70c1c636d8f5b4bb376760f9abc"
 }
