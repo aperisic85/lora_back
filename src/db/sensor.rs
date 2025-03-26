@@ -1,5 +1,5 @@
 use crate::models::device::{CreateDevice, Device};
-use crate::models::sensor_data::{CreateSensorData, SensorData};
+use crate::models::sensor_data::{CreateSensorData, SensorData, CreateLoraPacket, LoraPacket};
 use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use crate::error::ApiError;
@@ -103,6 +103,35 @@ pub async fn create_sensor_data(
         new_data.data,
         new_data.rssi,
         new_data.snr
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(ApiError::DatabaseError)
+}
+
+pub async fn save_lora_packet(
+    pool: &PgPool,
+    packet: CreateLoraPacket,
+) -> Result<LoraPacket, ApiError> {
+    sqlx::query_as!(
+        LoraPacket,
+        r#"
+        INSERT INTO lora_packets (eui, devaddr, frequency, data, received_at, gateways)
+        VALUES ($1, $2, $3, $4, NOW(), $5)
+        RETURNING 
+            id,
+            eui,
+            devaddr,
+            frequency,
+            data,
+            received_at as "received_at: chrono::DateTime<Utc>",
+            gateways as "gateways: serde_json::Value"
+        "#,
+        packet.eui,
+        packet.devaddr,
+        packet.frequency,
+        packet.data,
+        packet.gateways
     )
     .fetch_one(pool)
     .await

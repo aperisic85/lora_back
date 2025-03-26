@@ -18,3 +18,15 @@ CREATE TABLE sensor_data (
 
 CREATE INDEX idx_sensor_device ON sensor_data (device_id);
 CREATE INDEX idx_received_at ON sensor_data (received_at);
+
+CREATE TABLE lora_packets (
+    id SERIAL PRIMARY KEY,
+    eui TEXT NOT NULL,
+    devaddr TEXT NOT NULL,
+    frequency BIGINT NOT NULL,
+    data BYTEA,
+    received_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    gateways JSONB NOT NULL
+);
+
+CREATE INDEX idx_lora_eui ON lora_packets (eui);

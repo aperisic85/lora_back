@@ -3,6 +3,8 @@ use chrono::{DateTime, Utc};
 use uuid::Uuid;
 use super::gateway::Gateway;
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+
+
 pub struct SensorData {
     pub id: Uuid,
     pub device_id: String,
@@ -40,4 +42,24 @@ pub struct SensorData2 {
     pub seqno: i32,
     pub toa: i32,
     pub ts: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+pub struct LoraPacket {
+    pub id: i32,
+    pub eui: String,
+    pub devaddr: String,
+    pub frequency: i64,
+    pub data: Vec<u8>, // BYTEA
+    pub received_at: DateTime<Utc>,
+    pub gateways: serde_json::Value, // JSONB
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CreateLoraPacket {
+    pub eui: String,
+    pub devaddr: String,
+    pub frequency: i64,
+    pub data: Vec<u8>, // BYTEA
+    pub gateways: serde_json::Value, // JSONB
 }

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        INSERT INTO devices (device_id, device_type, created_at, description)\n        VALUES ($1, $2, NOW(), $3)\n        RETURNING \n            id,\n            device_id,\n            device_type,\n            created_at as \"created_at: chrono::DateTime<Utc>\",\n            description\n        ",
+  "query": "\n        INSERT INTO devices (device_id, device_type, description)\n        VALUES ($1, $2, $3)\n        RETURNING\n            id,\n            device_id,\n            device_type,\n            description,\n            created_at as \"created_at: chrono::DateTime<Utc>\"\n        ",
   "describe": {
     "columns": [
       {
@@ -20,13 +20,13 @@
       },
       {
         "ordinal": 3,
-        "name": "created_at: chrono::DateTime<Utc>",
-        "type_info": "Timestamptz"
+        "name": "description",
+        "type_info": "Text"
       },
       {
         "ordinal": 4,
-        "name": "description",
-        "type_info": "Text"
+        "name": "created_at: chrono::DateTime<Utc>",
+        "type_info": "Timestamptz"
       }
     ],
     "parameters": {
@@ -40,9 +40,9 @@
       false,
       false,
       false,
-      false,
-      true
+      true,
+      false
     ]
   },
-  "hash": "c01985d02d23694271896cf456f8a6e4cbba275cba125f7f12e56795cbfce84e"
+  "hash": "053bd4d82bda0b86717280a91f40bd53ffff9adb98b56f0d884ccdbc0cbec8eb"
 }
