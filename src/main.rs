@@ -2,11 +2,14 @@ use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use union_back::{config, create_app};
+use tracing::{info};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //let config = config::load_config()?;
-
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::INFO) // Postavite maksimalnu razinu logiranja
+        .init();
     let pool = PgPoolOptions::new()
         .max_connections(5)
         //.connect(&config.database_url)
@@ -21,6 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let listener = TcpListener::bind(addr).await?;
 
     println!("🚀 Server running on http://{}", addr);
+    info!("Application started!");
     axum::serve(listener, app).await?;
 
     Ok(())

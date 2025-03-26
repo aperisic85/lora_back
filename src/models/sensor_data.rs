@@ -44,22 +44,21 @@ pub struct SensorData2 {
     pub ts: i64,
 }
 
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+#[derive(sqlx::FromRow, Debug)]
 pub struct LoraPacket {
     pub id: i32,
-    pub eui: String,
-    pub devaddr: String,
+    pub eui: String,     // lowercase `eui` (matches `eui` in SQL)
+    pub devaddr: String, // lowercase `devaddr`
     pub frequency: i64,
-    pub data: Vec<u8>, // BYTEA
-    pub received_at: DateTime<Utc>,
-    pub gateways: serde_json::Value, // JSONB
+    pub data: Option<Vec<u8>>,
+    pub received_at: chrono::DateTime<Utc>,
+    pub gateways: serde_json::Value,
 }
-
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize,sqlx::FromRow)]
 pub struct CreateLoraPacket {
     pub eui: String,
     pub devaddr: String,
     pub frequency: i64,
-    pub data: Vec<u8>, // BYTEA
-    pub gateways: serde_json::Value, // JSONB
+    pub data: String, // BYTEA
+    pub gateways: serde_json::Value, // dynamic gateway data
 }

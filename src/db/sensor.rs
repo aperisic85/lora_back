@@ -1,12 +1,14 @@
 use crate::models::device::{CreateDevice, Device};
 use crate::models::sensor_data::{CreateSensorData, SensorData, CreateLoraPacket, LoraPacket};
 use sqlx::types::chrono::{DateTime, Utc};
-use sqlx::PgPool;
+use sqlx::{PgPool, Error};
 use crate::error::ApiError;
 use axum::{
     extract::State,
     Json,
 };
+
+use tracing::info;
 
 // Kreiranje novog uređaja
 pub async fn create_device(
@@ -112,28 +114,29 @@ pub async fn create_sensor_data(
 pub async fn save_lora_packet(
     pool: &PgPool,
     packet: CreateLoraPacket,
-) -> Result<LoraPacket, ApiError> {
+) -> Result<LoraPacket, Error> {
+    let decoded_data = hex::decode(&packet.data).unwrap_or_default(); // Decode hex string to bytes
+
     sqlx::query_as!(
         LoraPacket,
         r#"
-        INSERT INTO lora_packets (eui, devaddr, frequency, data, received_at, gateways)
-        VALUES ($1, $2, $3, $4, NOW(), $5)
+        INSERT INTO lora_packets (eui, devaddr, frequency, data, gateways)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING 
             id,
             eui,
             devaddr,
             frequency,
-            data,
+            data as "data: Option<Vec<u8>>",
             received_at as "received_at: chrono::DateTime<Utc>",
             gateways as "gateways: serde_json::Value"
         "#,
         packet.eui,
         packet.devaddr,
         packet.frequency,
-        packet.data,
+        decoded_data,
         packet.gateways
     )
     .fetch_one(pool)
     .await
-    .map_err(ApiError::DatabaseError)
 }

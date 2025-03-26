@@ -1,4 +1,5 @@
-CREATE TABLE devices (
+-- Add migration script here
+CREATE TABLE IF NOT EXISTS devices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     device_id VARCHAR(50) NOT NULL UNIQUE,
     device_type VARCHAR(50) NOT NULL,
@@ -6,8 +7,8 @@ CREATE TABLE devices (
     description TEXT
 );
 
-CREATE INDEX idx_device_id ON devices (device_id);
-CREATE TABLE sensor_data (
+CREATE INDEX IF NOT EXISTS idx_device_id ON devices (device_id);
+CREATE TABLE IF NOT EXISTS sensor_data (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     device_id VARCHAR(50) NOT NULL REFERENCES devices(device_id) ON DELETE CASCADE,
     data JSONB NOT NULL,
@@ -16,10 +17,10 @@ CREATE TABLE sensor_data (
     snr FLOAT
 );
 
-CREATE INDEX idx_sensor_device ON sensor_data (device_id);
-CREATE INDEX idx_received_at ON sensor_data (received_at);
+CREATE INDEX IF NOT EXISTS idx_sensor_device ON sensor_data (device_id);
+CREATE INDEX IF NOT EXISTS idx_received_at ON sensor_data (received_at);
 
-CREATE TABLE lora_packets (
+CREATE TABLE IF NOT EXISTS lora_packets (
     id SERIAL PRIMARY KEY,
     eui TEXT NOT NULL,
     devaddr TEXT NOT NULL,
@@ -29,4 +30,4 @@ CREATE TABLE lora_packets (
     gateways JSONB NOT NULL
 );
 
-CREATE INDEX idx_lora_eui ON lora_packets (eui);
+CREATE INDEX IF NOT EXISTS idx_lora_eui ON lora_packets (eui);

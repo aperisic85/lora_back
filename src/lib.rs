@@ -17,8 +17,9 @@ pub fn create_app(pool: PgPool) -> Router {
 
     Router::new()
         .route("/health", get(routes::health::health_check))
-        .route("/test", post(routes::lora::handle_lora_data))
+        //.route("/test", post(routes::lora::handle_lora_packet))
         .nest("/lora", routes::lora::device_routes()) 
+        .nest("/api", routes::lora::lora_routes())
         .with_state(pool)
         .layer(cors)
 }

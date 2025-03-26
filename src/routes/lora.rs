@@ -3,17 +3,17 @@ use crate::{
     error::ApiError, models::device::Device,
 };
 use axum::{
-    Json, Router,
-    extract::{Path, State},
-    routing::{get, post},
+    extract::{Path, State}, response::IntoResponse, routing::{get, post}, Json, Router
+
 };
 use sqlx::PgPool;
 
 use crate::models::device::{CreateDevice};
-use crate::models::sensor_data::{SensorData, CreateSensorData};
+use crate::models::sensor_data::{SensorData, CreateSensorData, CreateLoraPacket, LoraPacket};
+use crate::db::sensor::save_lora_packet;
 use crate::db::sensor::create_sensor_data;
 use tracing::info;
-
+use axum_macros::*;
 pub fn device_routes() -> Router<PgPool> {
     Router::new()
         .route("/", get(get_devices))
@@ -28,22 +28,9 @@ pub fn sensor_data_routes() -> Router<PgPool> {
 }
 
 
-pub fn sensor_routes() -> Router {
+pub fn lora_routes() -> Router<PgPool> {
     Router::new()
-        .route("/lora-data", post(handle_lora_data))
-}
-
-pub async fn handle_lora_data(
-    Json(payload): Json<SensorData>
-) -> Result<(), axum::http::StatusCode> {
-    info!("Received LoRa data: {:#?}", payload);
-    
-    // Ovdje dodajte logiku za obradu podataka:
-    // - Dekodiranje hex stringa iz payload.data
-    // - Pohrana u bazu podataka
-    // - Integracija s drugim sustavima
-    
-    Ok(())
+        .route("/lora-packets", post(test_sensor_data))
 }
 
 async fn get_devices(
@@ -91,4 +78,12 @@ pub async fn test_sensor_data(
 
     // Vrati podatke natrag kao odgovor
     Json(payload)
+}
+
+pub async fn handle_lora_packet(
+    State(pool): State<sqlx::PgPool>,
+    Json(payload): Json<CreateLoraPacket>,
+) -> Result<Json<LoraPacket>, ApiError> {
+    let saved_packet = save_lora_packet(&pool, payload).await?;
+    Ok(Json(saved_packet))
 }
