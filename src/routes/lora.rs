@@ -33,7 +33,7 @@ pub fn sensor_routes() -> Router {
         .route("/lora-data", post(handle_lora_data))
 }
 
-async fn handle_lora_data(
+pub async fn handle_lora_data(
     Json(payload): Json<SensorData>
 ) -> Result<(), axum::http::StatusCode> {
     info!("Received LoRa data: {:#?}", payload);
