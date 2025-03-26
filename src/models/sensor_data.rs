@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
-
+use super::gateway::Gateway;
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
 pub struct SensorData {
     pub id: Uuid,
@@ -20,3 +20,24 @@ pub struct CreateSensorData {
     pub snr: Option<f64>,
 }
 
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SensorData2 {
+    #[serde(rename = "EUI")]
+    pub eui: String,
+    pub ack: bool,
+    pub bat: i32,
+    pub cmd: String,
+    pub confirmed: bool,
+    pub data: String,
+    pub devaddr: String,
+    pub dr: String,
+    pub fcnt: i32,
+    pub freq: i64,
+    pub gws: Vec<Gateway>,
+    pub offline: bool,
+    pub port: i32,
+    pub seqno: i32,
+    pub toa: i32,
+    pub ts: i64,
+}

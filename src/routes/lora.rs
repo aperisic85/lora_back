@@ -12,6 +12,7 @@ use sqlx::PgPool;
 use crate::models::device::{CreateDevice};
 use crate::models::sensor_data::{SensorData, CreateSensorData};
 use crate::db::sensor::create_sensor_data;
+use tracing::info;
 
 pub fn device_routes() -> Router<PgPool> {
     Router::new()
@@ -26,6 +27,24 @@ pub fn sensor_data_routes() -> Router<PgPool> {
         .route("/sensor-data", post(create_sensor_data_handler))
 }
 
+
+pub fn sensor_routes() -> Router {
+    Router::new()
+        .route("/lora-data", post(handle_lora_data))
+}
+
+async fn handle_lora_data(
+    Json(payload): Json<SensorData>
+) -> Result<(), axum::http::StatusCode> {
+    info!("Received LoRa data: {:#?}", payload);
+    
+    // Ovdje dodajte logiku za obradu podataka:
+    // - Dekodiranje hex stringa iz payload.data
+    // - Pohrana u bazu podataka
+    // - Integracija s drugim sustavima
+    
+    Ok(())
+}
 
 async fn get_devices(
     State(pool): State<PgPool>
