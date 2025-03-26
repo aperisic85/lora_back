@@ -1,0 +1,8 @@
+[
+  {
+    "id": 1,
+    "title": "Naslov vijesti",
+    "content": "Cijeli tekst vijesti...",
+    "createdAt": "2023-08-20T12:34:56Z"
+  }
+]
