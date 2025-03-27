@@ -1,0 +1,31 @@
+curl -X POST http://localhost:8080/api/lora-packets \
+  -H "Content-Type: application/json" \
+  -d '{
+    "EUI": "479196A500430032",
+    "ack": false,
+    "bat": 255,
+    "cmd": "gw",
+    "confirmed": true,
+    "data": "70109c004e0037000100470281000700c100c7008101070081",
+    "devaddr": "00BA94CA",
+    "dr": "SF12 BW125 4/5",
+    "fcnt": 2,
+    "freq": 867300000,
+    "gws": [
+      {
+        "ant": 0,
+        "gweui": "7076FFFFFF03B6DF",
+        "lat": 43.5165443,
+        "lon": 16.434333,
+        "rssi": -109,
+        "snr": 0.2,
+        "time": "2025-03-27T09:28:21.107Z",
+        "ts": 1743067701107
+      }
+    ],
+    "offline": false,
+    "port": 8,
+    "seqno": 14477,
+    "toa": 1974,
+    "ts": 1743067701085
+  }'

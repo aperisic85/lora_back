@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 use crate::models::lora_data::SensorData;
 use crate::models::gateway::Gateway;
+use sqlx::types::Json;
+
 
 
 
@@ -28,7 +30,7 @@ pub async fn save_sensor_data(
             dr,
             fcnt,
             freq,
-            gws as "gws: Vec<Gateway>",
+            gws as "gws: Json<Vec<Gateway>>",
             offline,
             port,
             seqno,

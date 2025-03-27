@@ -2,8 +2,10 @@ use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 use super::gateway::Gateway;
 use sqlx::FromRow;
+use sqlx::types::Json;
 
 #[derive(Debug, Deserialize, Serialize, FromRow)]
+
 pub struct SensorData {
     #[serde(rename = "EUI")]
     pub eui: String,
@@ -16,7 +18,9 @@ pub struct SensorData {
     pub dr: String,
     pub fcnt: i32,
     pub freq: i64,
-    pub gws: Vec<Gateway>,
+    #[serde(rename = "gws")]
+    #[sqlx(rename = "gws")] 
+    pub gws: Json<Vec<Gateway>>,
     pub offline: bool,
     pub port: i32,
     pub seqno: i32,

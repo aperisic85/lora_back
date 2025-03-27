@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type)]
+#[sqlx(type_name = "jsonb")]
 pub struct Gateway {
     pub ant: i32,
     #[serde(rename = "gweui")]
