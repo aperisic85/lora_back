@@ -1,4 +1,4 @@
-use crate::{db, error::ApiError, models::device::Device};
+use crate::{db, error::ApiError, models::{self, device::Device}};
 use axum::{
     Json, Router,
     extract::{Path, State},
@@ -7,12 +7,9 @@ use axum::{
 };
 use sqlx::PgPool;
 
-use crate::db::sensor::create_sensor_data;
 use crate::db::sensor::save_lora_packet;
 use crate::models::device::CreateDevice;
-use crate::models::sensor_data::{CreateLoraPacket, CreateSensorData, LoraPacket, SensorData};
-use axum_macros::*;
-use tracing::info;
+use crate::models::sensor_data::{CreateLoraPacket, LoraPacket};
 pub fn device_routes() -> Router<PgPool> {
     Router::new()
         .route("/", get(get_devices))
@@ -20,13 +17,10 @@ pub fn device_routes() -> Router<PgPool> {
         .route("/create", post(create_device))
 }
 
-// Ruta za senzorske podatke
-pub fn sensor_data_routes() -> Router<PgPool> {
-    Router::new().route("/sensor-data", post(create_sensor_data_handler))
-}
 
 pub fn lora_routes() -> Router<PgPool> {
-    Router::new().route("/lora-packets", post(handle_lora_packet))
+    //Router::new().route("/lora-packets", post(handle_lora_packet))
+    Router::new().route("/lora-packets", post(handle_lora_data))
 }
 
 async fn get_devices(State(pool): State<PgPool>) -> Result<Json<Vec<Device>>, ApiError> {
@@ -52,13 +46,7 @@ async fn create_device(
     Ok(Json(device))
 }
 
-pub async fn create_sensor_data_handler(
-    State(pool): State<PgPool>,
-    Json(new_data): Json<CreateSensorData>,
-) -> Result<Json<SensorData>, ApiError> {
-    let sensor_data = create_sensor_data(&pool, new_data).await?;
-    Ok(Json(sensor_data))
-}
+
 
 // 4. POST za testiranje primljenih podataka sa senzora. Printa primljene podatke.
 pub async fn test_sensor_data(
@@ -77,4 +65,17 @@ pub async fn handle_lora_packet(
 ) -> Result<Json<LoraPacket>, ApiError> {
     let saved_packet = save_lora_packet(&pool, payload).await?;
     Ok(Json(saved_packet))
+}
+
+
+//#[axum::debug_handler]
+pub async fn handle_lora_data(
+    State(pool): State<sqlx::PgPool>,
+    Json(payload): Json<models::lora_data::SensorData>,
+) -> Result<Json<models::lora_data::SensorData>, ApiError> {
+    let data = db::lora::save_sensor_data(&pool, payload)
+        .await
+        .map_err(ApiError::DatabaseError)?;
+    
+    Ok(Json(data))
 }

@@ -1,5 +1,4 @@
 use super::gateway::Gateway;
-use base64;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;

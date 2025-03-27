@@ -5,7 +5,6 @@ use axum::{Json, extract::State};
 use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::{Error, PgPool};
 
-use tracing::info;
 
 // Kreiranje novog uređaja
 pub async fn create_device(pool: &PgPool, payload: CreateDevice) -> Result<Device, ApiError> {
@@ -72,33 +71,6 @@ pub async fn get_all_devices(pool: &PgPool) -> Result<Vec<Device>, ApiError> {
     .map_err(ApiError::DatabaseError)
 }
 
-// Glavna funkcija za unos podataka
-pub async fn create_sensor_data(
-    pool: &PgPool,
-    new_data: CreateSensorData,
-) -> Result<SensorData, ApiError> {
-    sqlx::query_as!(
-        SensorData,
-        r#"
-        INSERT INTO sensor_data (device_id, data, rssi, snr)
-        VALUES ($1, $2, $3, $4)
-        RETURNING
-            id,
-            device_id,
-            data as "data: _",
-            received_at as "received_at: chrono::DateTime<Utc>",
-            rssi,
-            snr
-        "#,
-        new_data.device_id,
-        new_data.data,
-        new_data.rssi,
-        new_data.snr
-    )
-    .fetch_one(pool)
-    .await
-    .map_err(ApiError::DatabaseError)
-}
 
 pub async fn save_lora_packet(
     pool: &sqlx::PgPool,

@@ -4,7 +4,7 @@ pub mod error;
 pub mod models;
 pub mod routes;
 
-use axum::{Router, routing::get, routing::post};
+use axum::{Router, routing::get};
 use sqlx::PgPool;
 use tower_http::cors::{Any, CorsLayer};
 

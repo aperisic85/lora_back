@@ -1,0 +1,133 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO sensor_data (\n            eui, ack, bat, cmd, confirmed, data, devaddr, dr, fcnt, freq,\n            gws, offline, port, seqno, toa, ts\n        )\n        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)\n        RETURNING\n            eui,\n            ack,\n            bat,\n            cmd,\n            confirmed,\n            data,\n            devaddr,\n            dr,\n            fcnt,\n            freq,\n            gws as \"gws: Vec<Gateway>\",\n            offline,\n            port,\n            seqno,\n            toa,\n            ts,\n            received_at as \"received_at: chrono::DateTime<Utc>\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "eui",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "ack",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 2,
+        "name": "bat",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "cmd",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "confirmed",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 5,
+        "name": "data",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "devaddr",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "dr",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "fcnt",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 9,
+        "name": "freq",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 10,
+        "name": "gws: Vec<Gateway>",
+        "type_info": "Jsonb"
+      },
+      {
+        "ordinal": 11,
+        "name": "offline",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 12,
+        "name": "port",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 13,
+        "name": "seqno",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 14,
+        "name": "toa",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 15,
+        "name": "ts",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 16,
+        "name": "received_at: chrono::DateTime<Utc>",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Bool",
+        "Int4",
+        "Text",
+        "Bool",
+        "Text",
+        "Text",
+        "Text",
+        "Int4",
+        "Int8",
+        "Jsonb",
+        "Bool",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "2f88f6e1e5710f93cdc8a8411ae673a4f8d01616058c9496803faf4c572e0cf2"
+}
