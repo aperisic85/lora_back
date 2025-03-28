@@ -1,4 +1,4 @@
-use crate::{db, error::ApiError, models::{self, device::Device}};
+use crate::{db, error::ApiError, models::{self, device::Device, lora_data}};
 use axum::{
     Json, Router,
     extract::{Path, State},
@@ -78,4 +78,12 @@ pub async fn handle_lora_data(
         .map_err(ApiError::DatabaseError)?;
     
     Ok(Json(data))
+}
+
+pub async fn get_sensor_by_eui_handler(
+    State(pool): State<PgPool>,
+    Path(eui): Path<String>,  // Changed to String
+) -> Result<Json<models::lora_data::SensorData>, ApiError> {
+    let sensor_data = db::lora::get_sensor_by_eui(&pool, eui).await?;
+    Ok(Json(sensor_data))
 }
