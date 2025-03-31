@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
+use tracing::info;
 use crate::error::ApiError;
-use crate::models::lora_data::SensorData;
+use crate::models::lora_data::{CreateSensorData, SensorData};
 use crate::models::gateway::Gateway;
 use sqlx::types::Json;
 use crate::AppState;
@@ -10,10 +11,11 @@ use axum::response::IntoResponse;
 use axum::http::StatusCode;
 
 
-pub async fn save_sensor_data(
+pub async fn save_lora_data(
     pool: &sqlx::PgPool,
-    data: SensorData,
+    data: CreateSensorData,
 ) -> Result<SensorData, sqlx::Error> {
+    info!("Saving sensor data: {:?}", data);
     sqlx::query_as!(
         SensorData,
         r#"

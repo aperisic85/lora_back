@@ -29,11 +29,26 @@ pub struct SensorData {
     pub ts: i64,
     pub received_at: Option<DateTime<Utc>>,
 }
-
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct CreateSensorData {
-    #[serde(flatten)]
-    pub data: SensorData,
+    #[serde(rename = "EUI")]
+    pub eui: String,
+    pub ack: bool,
+    pub bat: i32,
+    pub cmd: String,
+    pub confirmed: bool,
+    pub data: String,
+    pub devaddr: String,
+    pub dr: String,
+    pub fcnt: i32,
+    pub freq: i64,
+    #[serde(rename = "gws")]
+    pub gws: Vec<Gateway>,  // Directly deserialize gateway array
+    pub offline: bool,
+    pub port: i32,
+    pub seqno: i32,
+    pub toa: i32,
+    pub ts: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]

@@ -6,6 +6,8 @@ use axum::{
     routing::{get, post},
 };
 use sqlx::PgPool;
+use tracing::info;
+use tower_http::trace::TraceLayer;
 
 use crate::db::sensor::save_lora_packet;
 use crate::models::device::CreateDevice;
@@ -20,7 +22,10 @@ pub fn device_routes() -> Router<PgPool> {
 
 pub fn lora_routes() -> Router<PgPool> {
     //Router::new().route("/lora-packets", post(handle_lora_packet))
-    Router::new().route("/lora-packets", post(handle_lora_data))
+   // Router::new().route("/lora-packets", post(handle_lora_data))
+    Router::new()
+        .route("/lora-packets", post(handle_lora_data))
+        .layer(TraceLayer::new_for_http())
 }
 
 async fn get_devices(State(pool): State<PgPool>) -> Result<Json<Vec<Device>>, ApiError> {
@@ -63,22 +68,24 @@ pub async fn handle_lora_packet(
     State(pool): State<sqlx::PgPool>,
     Json(payload): Json<CreateLoraPacket>,
 ) -> Result<Json<LoraPacket>, ApiError> {
+    println!("Attempting to deserialize payload: {:?}", payload);
     let saved_packet = save_lora_packet(&pool, payload).await?;
     Ok(Json(saved_packet))
 }
 
 
-//#[axum::debug_handler]
+ //#[axum::debug_handler]
 pub async fn handle_lora_data(
     State(pool): State<sqlx::PgPool>,
-    Json(payload): Json<models::lora_data::SensorData>,
+    Json(payload): Json<models::lora_data::CreateSensorData>,
 ) -> Result<Json<models::lora_data::SensorData>, ApiError> {
-    let data = db::lora::save_sensor_data(&pool, payload)
+    let data = db::lora::save_lora_data(&pool, payload)
         .await
         .map_err(ApiError::DatabaseError)?;
+    info!("Saved sensor data: {:?}", data);
     
     Ok(Json(data))
-}
+} 
 
 pub async fn get_sensor_by_eui_handler(
     State(pool): State<PgPool>,

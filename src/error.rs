@@ -12,6 +12,7 @@ pub enum ApiError {
     NotFound,
     InvalidHexData,
     InvalidInput(String),
+    BadRequest(String),
 }
 
 impl IntoResponse for ApiError {
@@ -27,6 +28,7 @@ impl IntoResponse for ApiError {
             ),
             ApiError::NotFound => (StatusCode::NOT_FOUND, "Resource not found".to_string()),
             ApiError::InvalidInput(message) => (StatusCode::BAD_REQUEST, message),
+            ApiError::BadRequest(message) => (StatusCode::BAD_REQUEST, format!("deser er + {} ",message)),
         };
 
         // Return tuple with status code and JSON body
