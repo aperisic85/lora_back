@@ -1,0 +1,21 @@
+1.sudo mv path/to/your-rust-executable /usr/local/bin/
+2.sudo chmod +x /usr/local/bin/your-rust-executable
+3.sudo nano /etc/systemd/system/your-rust-service.service
+    [Unit]
+    Description=Your Rust Service
+    After=network.target
+
+    [Service]
+    ExecStart=/usr/local/bin/your-rust-executable
+    Restart=always
+    User=your-username
+    Group=your-groupname
+    Environment=RUST_LOG=info  # Optional: Set environment variables for your service
+    WorkingDirectory=/path/to/working-directory  # Optional: Specify working directory
+
+    [Install]
+    WantedBy=multi-user.target
+4.sudo systemctl daemon-reload
+5.sudo systemctl enable your-rust-service
+6.sudo systemctl start your-rust-service
+7.sudo systemctl status your-rust-service

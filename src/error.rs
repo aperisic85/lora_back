@@ -4,7 +4,6 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use serde_json::json;
-use uuid::Error;
 
 #[derive(Debug)]
 pub enum ApiError {

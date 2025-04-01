@@ -1,0 +1,48 @@
+1.sudo systemctl enable nginx
+sudo systemctl start nginx
+2.sudo systemctl status nginx 
+3.sudo nano /etc/nginx/sites-available/reverse-proxy.conf
+
+
+server {
+    listen 8080;
+
+    server_name localhost;
+
+    # Proxy frontend requests
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Proxy API requests
+    location /api/data {
+        proxy_pass http://127.0.0.1:3000/api/data;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    # Proxy API requests
+    location /api/lora-packets {
+        proxy_pass http://127.0.0.1:3000/api/lora-packets;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+4.sudo ln -s /etc/nginx/sites-available/reverse-proxy.conf /etc/nginx/sites-enabled/
+5.sudo nginx -t
+6.sudo systemctl restart nginx
+7.sudo ufw allow 'Nginx Full'
+8.sudo ufw allow 'Nginx HTTP'
+9.sudo ufw allow 'Nginx HTTPS'
+10.sudo ufw status
+11.sudo systemctl restart nginx
+12.sudo systemctl status nginx
+

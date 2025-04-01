@@ -64,7 +64,7 @@ pub async fn test_sensor_data(
     Json(payload)
 }
 
-pub async fn handle_lora_packet(
+/* pub async fn handle_lora_packet(
     State(pool): State<sqlx::PgPool>,
     Json(payload): Json<CreateLoraPacket>,
 ) -> Result<Json<LoraPacket>, ApiError> {
@@ -72,7 +72,7 @@ pub async fn handle_lora_packet(
     let saved_packet = save_lora_packet(&pool, payload).await?;
     Ok(Json(saved_packet))
 }
-
+ */
 
  //#[axum::debug_handler]
 pub async fn handle_lora_data(
